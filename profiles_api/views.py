@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework import viewsets
 from profiles_api import serializers
-
+from profiles_api import models
 
 class HelloApiView(APIView):
     """Test API View"""
@@ -18,7 +18,7 @@ class HelloApiView(APIView):
             'Is mapped manually to urls',
         ]
 
-        return Response({'message' : 'Hello!', 'an_apiview' : an_apiview})
+        return Response({'message': 'Hello!', 'an_apiview' : an_apiview})
     
     def post(self, request):
         """Create a hello message with our name"""
@@ -27,7 +27,7 @@ class HelloApiView(APIView):
         if serializer.is_valid():
             name = serializer.validated_data.get('name')
             message = f'hello {name}'
-            return Response({'message' : message})
+            return Response({'message': message})
         else:
             return Response(
                 serializer.errors, 
@@ -36,13 +36,32 @@ class HelloApiView(APIView):
         
     def put(self, request, pk=None):
         """Handle updating an object"""
-        return Response({'method' : 'PUT'})
+        return Response({'method': 'PUT'})
     
     def patch(self, request, pk=None):
         """Handle a partial update of an object"""
-        return Response({'method' : 'PATCH'})
+        return Response({'method': 'PATCH'})
     
 
     def delete(self, request, pk=None):
         """Delete an object"""
-        return Response({'method' : 'DELETE'})
+        return Response({'method': 'DELETE'})
+
+class HelloViewSet(viewsets.ViewSet):
+    """Test Api viewset"""
+
+    def list(self, request):
+        """Return a hello message"""
+        a_viewset = [
+            'Uses actions (list, create, retrieve, update, partial_update)',
+            'Automatically maps to URLs using Routers',
+            'Provides more functionality with less code',
+        ]
+
+        return Response({'message': 'hello!', 'a_viewset': a_viewset})
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
